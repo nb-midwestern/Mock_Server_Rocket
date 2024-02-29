@@ -12,3 +12,9 @@ Rust
 ```shell
 cargo run
 ```
+
+## How to use
+
+- Point your client to make post requests to this service.
+- Send a post request (as of writing this, only post requests with a body are captures);
+- Read console for the payload
