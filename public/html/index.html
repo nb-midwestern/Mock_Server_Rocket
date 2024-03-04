@@ -8,5 +8,114 @@
         </div>
     </div>
 </section>
+<section class="section">
+    <div class="container">
+        <h1 class="title">Toggle Value with Bulma</h1>
+        <div id="toggle-status" class="notification is-info">
+            Click a button to set the value.
+        </div>
+        <div class="buttons">
+            <form
+                hx-post="api/response-type/toggle"
+                hx-swap="outerHTML"
+                hx-target="#toggle-status"
+            >
+                <input type="hidden" name="state" value="true" />
+                <button type="submit" class="button is-primary">
+                    Return 200 Ok
+                </button>
+            </form>
+            <form
+                hx-post="api/response-type/toggle"
+                hx-swap="outerHTML"
+                hx-target="#toggle-status"
+            >
+                <input type="hidden" name="state" value="false" />
+                <button type="submit" class="button is-link">
+                    Return Bad Request
+                </button>
+            </form>
+            <form hx-post="/your-endpoint" hx-swap="none" method="post">
+                <input type="hidden" name="someData" value="yourValue" />
+                <button type="submit" class="button">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">Update Response Values</h1>
+
+        <div class="field">
+            <label class="label">Update "ok" Value</label>
+            <form
+                hx-post="/api/response-body"
+                hx-target="#ok-response"
+                hx-vals='{"field": "ok"}'
+                class="form"
+            >
+                <div class="control">
+                    <input
+                        class="input ok-value"
+                        type="text"
+                        name="value"
+                        placeholder="Enter 'ok' value"
+                    />
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-primary">
+                        Update OK
+                    </button>
+                </div>
+            </form>
+            <div id="ok-response"></div>
+        </div>
+
+        <div class="field">
+            <label class="label">Update "err" Value</label>
+            <form
+                hx-post="api/response-body"
+                hx-target="#err-response"
+                hx-vals='{"field": "err"}'
+                class="form"
+            >
+                <div class="control">
+                    <input
+                        class="input err-value"
+                        type="text"
+                        name="value"
+                        placeholder="Enter 'err' value"
+                    />
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-link">
+                        Update ERR
+                    </button>
+                </div>
+            </form>
+            <div id="err-response"></div>
+        </div>
+    </div>
+</section>
+
+<div
+    hx-get="/api/current-values"
+    hx-trigger="load"
+    hx-swap="none"
+    id="load-current-values"
+></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        htmx.on("htmx:afterRequest", function (event) {
+            if (event.detail.xhr.responseURL.includes("/api/current-values")) {
+                const data = JSON.parse(event.detail.xhr.responseText);
+                document.querySelector(".ok-value").value = data.ok;
+                document.querySelector(".err-value").value = data.err;
+            }
+        });
+    });
+</script>
 
 {% endblock %}

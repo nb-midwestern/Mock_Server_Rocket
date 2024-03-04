@@ -6,8 +6,12 @@ use rocket::tokio::io::AsyncReadExt;
 use serde_json::Value;
 use std::path::PathBuf;
 
+use crate::{AppState, ResponseState};
+
 #[put("/<path..>", data = "<data>")]
 pub async fn log_put_with_body(
+    state: &rocket::State<ResponseState>,
+    app_state: &rocket::State<AppState>,
     path: PathBuf,
     content_type: &ContentType,
     data: Data<'_>,
@@ -35,6 +39,9 @@ pub async fn log_put_with_body(
             );
         }
     }
-    // Ok("{}".to_string())
-    Err(BadRequest("Bad request".to_string()))
+    let body = app_state.body.lock().unwrap();
+    match *state.value.lock().unwrap() {
+        false => Err(BadRequest(body.err.clone())),
+        _ => Ok(body.ok.clone()),
+    }
 }
